@@ -1,58 +1,196 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser-arcade-physics.js"></script>
+    <title>Quiz Tech</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #363a3c;
+        }
+    </style>
 </head>
 <body>
 
     <script>
-    var config = {
-        type: Phaser.AUTO,
-        width: 800,
-        height: 600,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                gravity: { y: 200 }
+        var Login = new Phaser.Class({
+
+            Extends: Phaser.Scene,
+        
+            initialize:
+        
+            function Login ()
+            {
+                Phaser.Scene.call(this, { key: 'login'});
+            },
+        
+            preload: function ()
+            {
+                this.load.html('formName', 'html/form-name.html');
+                this.load.image('logo', 'images/logo2.png');
+                this.load.image('bgLogin', 'images/bg-login2.jpg');
+            },
+        
+            create: function ()
+            {
+                this.add.image(400, 214, 'bgLogin');
+                this.add.image(400, 130, 'logo');
+                
+                var element = this.add.dom(400, 300).setInteractive().createFromCache('formName');
+
+                element.addListener('click');
+                element.on('click', function(event) {
+                    if (event.target.name === 'playButton')
+                    {
+                        var inputText = this.getChildByName('name');
+            
+                        if (inputText.value !== '')
+                        {
+                            this.removeListener('click');
+                            this.setVisible(false);
+                            name = inputText.value;
+                            this.scene.scene.start('info', { name: name.substring(0, 20) });    
+                        }
+                    }
+                });
             }
-        },
-        scene: {
-            preload: preload,
-            create: create
-        }
-    };
+        });
+        
+        var Info = new Phaser.Class({
 
-    var game = new Phaser.Game(config);
+            Extends: Phaser.Scene,
+        
+            initialize:
+        
+            function Info ()
+            {
+                Phaser.Scene.call(this, { key: 'info'});
+            },
+        
+            init: function (data)
+            {
+                this.name = data.name;
+                this.name = 'Hugo Júnior';
+            },
 
-    function preload ()
-    {
-        this.load.setBaseURL('http://labs.phaser.io');
+            preload: function ()
+            {
+                this.load.image('bgInfo', 'images/bg-info.jpg');
+                this.load.html('infoText', 'html/info.html');
+            },
+        
+            create: function ()
+            {
+                this.add.image(400, 214, 'bgInfo');
+                this.add.text(20, 20, 'Bem-vindo,', { fontFamily: "'Courier New', Courier, monospace", fontSize: 20, color: "#333333", fontWeight: 'bold' });
+                this.add.text(20, 40, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 30, color: "#333333" });
 
-        this.load.image('sky', 'assets/skies/space3.png');
-        this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-        this.load.image('red', 'assets/particles/red.png');
-    }
-
-    function create ()
-    {
-        this.add.image(400, 300, 'sky');
-
-        var particles = this.add.particles('red');
-
-        var emitter = particles.createEmitter({
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
+                var element = this.add.dom(400, 250).setInteractive().createFromCache('infoText');
+                element.addListener('click');
+                element.on('click', function(event) {
+                    if (event.target.name === 'playButton2')
+                    {
+                        this.scene.scene.start('game', { name: this.name });
+                    }
+                });
+            }
+        
         });
 
-        var logo = this.physics.add.image(400, 100, 'logo');
+        var Game = new Phaser.Class({
 
-        logo.setVelocity(100, 200);
-        logo.setBounce(1, 1);
-        logo.setCollideWorldBounds(true);
+            Extends: Phaser.Scene,
+        
+            initialize:
+        
+            function Game ()
+            {
+                Phaser.Scene.call(this, { key: 'game'});
+            },
+        
+            init: function (data)
+            {
+                this.name = data.name;
+                this.name = 'Hugo Júnior';
+            },
 
-        emitter.startFollow(logo);
-    }
+            preload: function ()
+            {      
+                this.load.image('logoProg', 'images/prog1.png');
+                this.load.image('red', 'images/blue.png');
+
+                if(isDay()) {
+                    this.load.image('bg', 'images/bg-dia-800.jpg');
+                } else {
+                    this.load.image('bg', 'images/bg-noite-800.jpg');
+                }
+            },
+        
+            create: function ()
+            {
+                this.add.image(400, 214, 'bg');
+                this.add.text(20, 20, 'Jogando como:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
+                this.add.text(20, 40, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+            
+                this.add.text(630, 20, 'Tempo restante:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
+                this.text = this.add.text(715, 40, '00:00', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+                this.timedEvent = this.time.addEvent({ delay: 20000, callback: this.onEvent, callbackScope: this });
+            
+                var particles = this.add.particles('red');
+
+                var emitter = particles.createEmitter({
+                    speed: 100,
+                    scale: { start: 1, end: 0 },
+                    blendMode: 'ADD'
+                });
+        
+                var logo = this.physics.add.image(400, 100, 'logoProg');
+        
+                logo.setVelocity(100, 200);
+                logo.setBounce(1, 1);
+                logo.setCollideWorldBounds(true);
+        
+                emitter.startFollow(logo);
+            },
+
+            onEvent: function ()
+            {
+                //
+            },
+
+            update: function ()
+            {
+                this.text.setText(this.timedEvent.getProgress().toString().substr(0, 4));
+            }
+    
+        });
+       
+        function isDay() {
+            const hours = (new Date()).getHours();
+            return (hours >= 6 && hours < 18);
+        }
+
+        var config = {
+            type: Phaser.WEBGL,
+            parent: 'game',
+            width: 800,
+            height: 429,
+            backgroundColor: '#000000',
+            autoCenter: true,
+            dom: {
+                createContainer: true
+            },
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 200 }
+                }
+            },
+            scene: [Login, Info, Game]
+        };
+        
+        var game = new Phaser.Game(config);
+
     </script>
 
 </body>

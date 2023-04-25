@@ -49,7 +49,7 @@
                             this.removeListener('click');
                             this.setVisible(false);
                             var name = inputText.value;
-                            this.scene.scene.start('info', { name: name.substring(0, 10) });    
+                            this.scene.scene.start('info', { name: name.substring(0, 15) });    
                         }
                     }
                 });
@@ -89,7 +89,7 @@
                 element.on('click', function(event) {
                     if (event.target.name === 'startGame')
                     {                  
-                        this.scene.scene.start('game', { name: this.scene.name.substring(0, 10) });
+                        this.scene.scene.start('game', { name: this.scene.name.substring(0, 15) });
                     }
                 });
             }
@@ -116,8 +116,14 @@
 
             preload: function ()
             {      
-                this.load.image('logoProg', 'images/prog1.png');
+                this.load.image('logoProg', 'images/prog2.png');
                 this.load.image('red', 'images/blue.png');
+
+                // life images
+                this.load.image('lifes3', 'images/lifes3.png');
+                this.load.image('lifes2', 'images/lifes2.png');
+                this.load.image('lifes1', 'images/lifes1.png');
+                this.load.image('lifes0', 'images/lifes0.png');
 
                 if(this.isDay()) {
                     this.load.image('bg', 'images/bg-dia-800.jpg');
@@ -130,7 +136,7 @@
             {
                 this.add.image(400, 214, 'bg');
 
-                var prog = this.add.image(45, 360, 'logoProg');
+                var prog = this.add.image(45, 380, 'logoProg');
                 const tween = this.add.tween({
                     targets: prog,
                     x: 748,
@@ -143,7 +149,24 @@
                 this.add.text(20, 20, 'Jogando como:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
                 this.add.text(20, 40, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
 
-                this.add.text(300, 20, '(Box de vidas aqui)', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+                this.lifes = this.add.image(410, 35, 'lifes3');
+
+                this.input.keyboard.on('keydown-ZERO', (event) => {
+                    this.lifes.visible = false;
+                    this.lifes = this.add.image(410, 35, 'lifes0');
+                });
+                this.input.keyboard.on('keydown-ONE', (event) => {
+                    this.lifes.visible = false;
+                    this.lifes = this.add.image(410, 35, 'lifes1');
+                });
+                this.input.keyboard.on('keydown-TWO', (event) => {
+                    this.lifes.visible = false;
+                    this.lifes = this.add.image(410, 35, 'lifes2');
+                });
+                this.input.keyboard.on('keydown-THREE', (event) => {
+                    this.lifes.visible = false;
+                    this.lifes = this.add.image(410, 35, 'lifes3');
+                });
                 
                 this.add.text(630, 20, 'Tempo restante:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
                 
@@ -193,6 +216,7 @@
                     gravity: { y: 200 }
                 }
             },
+            // scene: [Game]
             scene: [Login, Info, Game]
         };
         

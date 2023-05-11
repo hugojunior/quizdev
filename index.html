@@ -110,20 +110,27 @@
             init: function (data)
             {
                 this.name = data.name;
-                this.initialCountdownTime = 10; //segundos
-                // this.name = "Hugo Júnior";
+                this.initialCountdownTime = 180; //segundos
+                this.lifes = 3;
+                this.positionStart = 0;
+                this.questionsCorrects = 0;
+                this.questionsIds = [];
+                this.questionsJson = {};
+                this.currentQuestion = null;
             },
 
             preload: function ()
-            {      
+            {   
+                this.input.keyboard.enabled = true;
+                this.load.html(`gameOver`, `html/game-over.html`);            
                 this.load.image('logoProg', 'images/prog2.png');
                 this.load.image('red', 'images/blue.png');
-
-                // life images
                 this.load.image('lifes3', 'images/lifes3.png');
                 this.load.image('lifes2', 'images/lifes2.png');
                 this.load.image('lifes1', 'images/lifes1.png');
                 this.load.image('lifes0', 'images/lifes0.png');
+                this.load.json('questionsJson', 'questions.json');
+                this.loadQuestionsHTML();
 
                 if(this.isDay()) {
                     this.load.image('bg', 'images/bg-dia-800.jpg');
@@ -146,45 +153,128 @@
                     repeat: -1
                 });
 
-                this.add.text(20, 20, 'Jogando como:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
-                this.add.text(20, 40, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+                this.add.text(10, 10, 'Jogando como:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
+                this.add.text(10, 30, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
 
-                this.lifes = this.add.image(410, 35, 'lifes3');
+                this.lifesBox = this.add.image(410, 35, 'lifes3');
 
-                this.input.keyboard.on('keydown-ZERO', (event) => {
-                    this.lifes.visible = false;
-                    this.lifes = this.add.image(410, 35, 'lifes0');
-                });
-                this.input.keyboard.on('keydown-ONE', (event) => {
-                    this.lifes.visible = false;
-                    this.lifes = this.add.image(410, 35, 'lifes1');
-                });
-                this.input.keyboard.on('keydown-TWO', (event) => {
-                    this.lifes.visible = false;
-                    this.lifes = this.add.image(410, 35, 'lifes2');
-                });
-                this.input.keyboard.on('keydown-THREE', (event) => {
-                    this.lifes.visible = false;
-                    this.lifes = this.add.image(410, 35, 'lifes3');
-                });
+                this.add.text(630, 10, 'Tempo restante:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
                 
-                this.add.text(630, 20, 'Tempo restante:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
-                
-                this.countdownText = this.add.text(715, 40, this.formatTime(this.initialCountdownTime), { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+                this.countdownText = this.add.text(715, 30, this.formatTime(this.initialCountdownTime), { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
                 this.timedEvent = this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
 
+                this.questionsJson = this.cache.json.get('questionsJson').sort(() => Math.random() - 0.5);
+                this.questionsJson.forEach((question) => {
+                    this.questionsIds.push(question.id);
+                });
+                this.currentQuestion = this.questionsIds[0];               
+                this.showQuestion();
+
+                if(document.querySelector('#questionHTML')) {
+                    this.input.keyboard.on('keydown-ONE', (event) => {
+                        this.checkQuestion(this.currentQuestion, 'answer_a', 1);
+                    });
+                    this.input.keyboard.on('keydown-TWO', (event) => {
+                        this.checkQuestion(this.currentQuestion, 'answer_b', 2);
+                    });
+                    this.input.keyboard.on('keydown-THREE', (event) => {
+                        this.checkQuestion(this.currentQuestion, 'answer_c', 3);        
+                    });
+                    this.input.keyboard.on('keydown-FOUR', (event) => {
+                        this.checkQuestion(this.currentQuestion, 'answer_d', 4);
+                    });
+                }
             },
 
-            isDay() {
+            showQuestion: function(questionID) {
+                var questionID = questionID || this.currentQuestion;
+                this.questionHTML = this.add.dom(400, 200).setInteractive().createFromCache(`question-${questionID}`);
+                document.querySelector("#questionInfo").innerHTML = `Questão ${this.getQuestionIndexByID(this.questionsJson, questionID)+1} de ${this.questionsJson.length} // Acertos: ${this.questionsCorrects}`;            
+            },
+
+            checkQuestion: function(questionID, answerID, keyNumber) {
+                if(this.checkAnswerKeyExists(questionID, answerID, keyNumber)) {
+                    this.questionHTML.destroy();
+                    if(this.questionsJson.length === (this.getQuestionIndexByID(this.questionsJson, questionID)+1)) {
+                        this.success();
+                    }  else {
+                        if(this.checkCorrectQuestion(questionID, answerID)) {
+                            this.questionsCorrects += 1;
+                        } else {
+                            if(this.lifes === 0) {
+                                this.gameOver('[Acabou suas vidas]');
+                                return true;
+                            } else {
+                                this.lifes -= 1;
+                                this.updateLifes();
+                            }
+                        }
+                        var nextQuestion = this.getNextQuestionID(this.questionsJson, questionID);
+                        this.currentQuestion = nextQuestion;
+                        this.showQuestion(nextQuestion);
+                    }
+                }
+            },
+
+            checkAnswerKeyExists: function(questionID, answerID, keyNumber) {
+                var totalAnswers = this.getQuestionByID(this.questionsJson, questionID).answers;
+                totalAnswers = Object.values(totalAnswers).filter(Boolean).length;
+                return (keyNumber <= totalAnswers);
+            },
+
+            checkCorrectQuestion: function(questionID, answerID) {
+                var question = this.getQuestionByID(this.questionsJson, questionID);
+                switch(answerID) {
+                    case 'answer_a':
+                        return (question.correct_answers.answer_a_correct === "true");
+                    case 'answer_b':
+                        return (question.correct_answers.answer_b_correct === "true");
+                    case 'answer_c':
+                        return (question.correct_answers.answer_c_correct === "true");
+                    case 'answer_d':
+                        return (question.correct_answers.answer_d_correct === "true");
+                }
+            },
+
+            updateLifes: function() {
+                this.lifesBox.destroy();
+                this.lifesBox = this.add.image(410, 35, `lifes${this.lifes}`);
+            },
+            
+            loadQuestionsHTML: function() {
+                var questionsIds = [792,983,419,651,593,606,901,243,850,845,1066,829,842,1058,471,689,453,629,801,295];
+                questionsIds.forEach((id) => {
+                    var file = this.load.html(`question-${id}`, `html/question-${id}.html`);
+                    file.start();
+                });
+            },
+
+            isDay: function() {
                 const hours = (new Date()).getHours();
                 return (hours >= 6 && hours < 18);
             },
 
-            onEvent: function ()
-            {
+            gameOver: function(text) {
+                this.timedEvent.remove(false);
+                this.input.keyboard.enabled = false;
+                var overHTML = this.add.dom(400, 200).setInteractive().createFromCache('gameOver');
+                document.querySelector("#overText").innerHTML = text || '';
+                document.querySelector("#finalScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
+                document.querySelector("#playAgain").addEventListener('click', () => {
+                    this.scene.restart();
+                });
+            },
+
+            success: function() {
+                this.input.keyboard.enabled = false;
+                console.log('VENCEU!');
+            },
+
+            onEvent: function() {
                 if (this.initialCountdownTime === 0) {
                     this.timedEvent.remove(false);
-                    console.log('Game Over por tempo!');
+                    this.questionHTML.destroy();
+                    this.gameOver('[Acabou seu tempo]');
                 } else {
                     this.initialCountdownTime -= 1;
                     this.countdownText.setText(this.formatTime(this.initialCountdownTime));
@@ -196,6 +286,19 @@
                 var partInSeconds = seconds%60;
                 partInSeconds = partInSeconds.toString().padStart(2,'0');
                 return `${minutes}:${partInSeconds}`;
+            },
+
+            getQuestionByID: function(myArray, value) {
+                return myArray.find(item => item.id === value);
+            },
+
+            getQuestionIndexByID: function(myArray, value) {
+                return myArray.findIndex(item => item.id === value);
+            },
+
+            getNextQuestionID: function(myArray, value) {
+                var currentIndex = this.getQuestionIndexByID(myArray, value);
+                return this.questionsJson[currentIndex+1].id;
             }
     
         });
@@ -216,7 +319,6 @@
                     gravity: { y: 200 }
                 }
             },
-            // scene: [Game]
             scene: [Login, Info, Game]
         };
         

@@ -56,10 +56,15 @@
                 this.load.html('formName', 'html/form-name.html');
                 this.load.image('logo', 'images/logo2.png');
                 this.load.image('bgLogin', 'images/bg-login2.jpg');
+                
+                this.load.audio("music", ["sounds/game-music.mp3"]);
             },
         
             create: function ()
             {
+                this.sound.removeAll();
+                var music = this.sound.add("music", {loop: true, volume: 0.2}).play();
+
                 this.add.image(400, 214, 'bgLogin');
                 this.add.image(400, 130, 'logo');
                 
@@ -160,6 +165,10 @@
                 this.load.image('red', 'images/red.png');
                 this.load.image('green', 'images/green.png');
                 this.load.json('questionsJson', 'questions.json');
+                this.load.audio("sGameOver", ["sounds/game-over.mp3"]);
+                this.load.audio("sGameSuccess", ["sounds/game-success.mp3"]);
+                this.load.audio("sQuestionCorrect", ["sounds/question-correct.mp3"]);
+                this.load.audio("sQuestionIncorrect", ["sounds/question-incorrect.mp3"]);                
                 this.loadQuestionsHTML();
 
                 if(this.isDay()) {
@@ -171,6 +180,11 @@
         
             create: function ()
             {
+                this.sGameOver = this.sound.add("sGameOver", {loop:false, volume: 1});
+                this.sGameSuccess = this.sound.add("sGameSuccess", {loop:false, volume: 1});
+                this.sQuestionCorrect = this.sound.add("sQuestionCorrect", {loop:false, volume: 1});
+                this.sQuestionIncorrect = this.sound.add("sQuestionIncorrect", {loop:false, volume: 1});
+
                 this.add.image(400, 214, 'bg');
                               
                 this.greenParticle = this.add.particles('green');
@@ -233,6 +247,7 @@
                     this.questionHTML.destroy();
                     
                     if(!this.checkCorrectQuestion(questionID, answerID)) {
+                        this.sQuestionIncorrect.play();
                         if(this.lifes === 0) {
                             return this.gameOver('[Acabou suas vidas]');
                         } else {
@@ -276,6 +291,7 @@
                 }
 
                 if(correct) {
+                    this.sQuestionCorrect.play();
                     this.questionsCorrects += 1;
                 }
 
@@ -307,6 +323,7 @@
                 this.timedEvent.remove(false);
                 this.input.keyboard.enabled = false;
                 this.gameEnd = true;
+                this.sGameOver.play();
                 var overHTML = this.add.dom(400, 200).setInteractive().createFromCache('gameOver');
                 document.querySelector("#overText").innerHTML = text || '';
                 document.querySelector("#finalScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
@@ -318,7 +335,7 @@
             success: function() {
                 this.input.keyboard.enabled = false;
                 this.gameEnd = true;
-
+                this.sGameSuccess.play();
                 var overHTML = this.add.dom(400, 200).setInteractive().createFromCache('success');
                 document.querySelector("#playAgain").addEventListener('click', () => {
                     this.scene.restart();
@@ -417,7 +434,6 @@
                 }
             },
             scene: [Login, Info, Game]
-            //scene: [Game]
         };
         
         var game = new Phaser.Game(config);
@@ -434,6 +450,7 @@
             <li>PixaBay (Efeitos Sonoros) - <a href="https://pixabay.com/pt/sound-effects/" target="_blank">https://pixabay.com/pt/sound-effects/</a></li>
             <li>ChatGPT (Textos e traduções) - <a href="https://chat.openai.com/" target="_blank">https://chat.openai.com/</a></li>
             <li>StackOverflow (Dúvidas gerais) - <a href="https://stackoverflow.com/" target="_blank">https://stackoverflow.com/</a></li>
+            <li>GitHub (Repositório) - <a href="https://github.com/hugojunior/faculdade-estagio-1" target="_blank">https://github.com/hugojunior/faculdade-estagio-1</a></li>
         </ul>
     </div>
 </body>

@@ -1,10 +1,13 @@
 # QuizDev - Jogando e aprendendo!
-> Esse projeto faz parte da disciplina de Estágio Supervisionado do Curso de Sistemas de Informação na UNI7.
-> 
+
+> Esse projeto faz parte da disciplina de Estágio Supervisionado do Curso de Sistemas de Informação na UNI7. 
+
 ![QuizDEV](images/game-screenshot.png "QuizDEV")
 
 ## Descrição
 Este quiz é projetado para testar seus conhecimentos em tópicos importantes do mundo de desenvolvimento de software e tecnologia. Você será apresentado a uma série de tópicos importantes, como: **JavaScript**, **Docker**, **Linux**, **PHP**, **SQL** e etc...
+
+Versão Online: https://quizdev.hugojunior.com/
 
 ## Rodando o projeto
 Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](https://github.com/ritwickdey/vscode-live-server) no VSCode.
@@ -19,4 +22,3 @@ Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](http
 - ChatGPT (Textos e traduções) - https://chat.openai.com/
 - StackOverflow (Dúvidas gerais) - https://stackoverflow.com/
 - GitHub (Repositório) - https://github.com/hugojunior/faculdade-estagio-1
-

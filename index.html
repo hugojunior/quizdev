@@ -415,6 +415,7 @@
             pressF: function() {
                 if(this.gameFinished) {
                     if(!this.ee1) {
+                        this.sound.pauseAll();
                         this.ee1 = this.add.dom(400, 214).setInteractive().createFromCache('gameEe1');
                         document.querySelector("#closeEe1").addEventListener('click', () => {
                             this.pressF();
@@ -422,6 +423,7 @@
                     } else {
                         this.ee1.destroy();
                         this.ee1 = false;
+                        this.sound.resumeAll();
                     }
                 }
             },

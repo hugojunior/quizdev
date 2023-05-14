@@ -12,7 +12,7 @@ Versão Online: https://quizdev.hugojunior.com/
 ## Rodando o projeto
 Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](https://github.com/ritwickdey/vscode-live-server) no VSCode.
 
-## Ferramentas usadas
+## Ferramentas utilizadas
 - Phaser (Game Framework) - https://phaser.io/
 - JavaScript (Linguagem de Programação) - https://www.javascript.com/
 - QuizAPI (API de Questões) - https://quizapi.io/

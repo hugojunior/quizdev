@@ -237,7 +237,7 @@
                     if(!this.checkCorrectQuestion(questionID, answerID)) {
                         this.sQuestionIncorrect.play();
                         if(this.lifes === 0) {
-                            return this.gameOver('[Acabou suas vidas]');
+                            return this.gameOver('[Acabaram suas vidas]');
                         } else {
                             this.updateLifes();
                         }
@@ -354,7 +354,7 @@
                 if (this.initialCountdownTime === 0) {
                     this.timedEvent.remove(false);
                     this.questionHTML.destroy();
-                    this.gameOver('[Acabou seu tempo]');
+                    this.gameOver('[Seu tempo esgotou]');
                 } else {
                     this.initialCountdownTime -= 1;
                     this.countdownText.setText(this.formatTime(this.initialCountdownTime));
@@ -481,7 +481,7 @@
             <li>PixaBay (Efeitos Sonoros) - <a href="https://pixabay.com/pt/sound-effects/" target="_blank">https://pixabay.com/pt/sound-effects/</a></li>
             <li>ChatGPT (Textos e traduções) - <a href="https://chat.openai.com/" target="_blank">https://chat.openai.com/</a></li>
             <li>StackOverflow (Dúvidas gerais) - <a href="https://stackoverflow.com/" target="_blank">https://stackoverflow.com/</a></li>
-            <li>GitHub (Repositório) - <a href="https://github.com/hugojunior/faculdade-estagio-1" target="_blank">https://github.com/hugojunior/faculdade-estagio-1</a></li>
+            <li>GitHub (Repositório) - <a href="https://github.com/hugojunior/quizdev" target="_blank">https://github.com/hugojunior/quizdev</a></li>
         </ul>
     </div>
 </body>

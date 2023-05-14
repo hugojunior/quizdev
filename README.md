@@ -21,4 +21,4 @@ Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](http
 - PixaBay (Efeitos Sonoros) - https://pixabay.com/pt/sound-effects/
 - ChatGPT (Textos e traduções) - https://chat.openai.com/
 - StackOverflow (Dúvidas gerais) - https://stackoverflow.com/
-- GitHub (Repositório) - https://github.com/hugojunior/faculdade-estagio-1
+- GitHub (Repositório) - https://github.com/hugojunior/quizdev

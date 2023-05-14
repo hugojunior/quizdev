@@ -1,16 +1,22 @@
-# DESCRIÇÃO DO PROJETO
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# QuizDev - Jogando e aprendendo!
+> Esse projeto faz parte da disciplina de Estágio Supervisionado do Curso de Sistemas de Informação na UNI7.
+> 
+![QuizDEV](images/game-screenshot.png "QuizDEV")
 
+## Descrição
+Este quiz é projetado para testar seus conhecimentos em tópicos importantes do mundo de desenvolvimento de software e tecnologia. Você será apresentado a uma série de tópicos importantes, como: **JavaScript**, **Docker**, **Linux**, **PHP**, **SQL** e etc...
 
-https://quizapi.io/api/v1/questions?apiKey=7WTesgQw8zskF6UzhqGxWaVwVQx66EQU9O32IhcR&limit=20
+## Rodando o projeto
+Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](https://github.com/ritwickdey/vscode-live-server) no VSCode.
 
-- Criar cada questão em um arquivo HTML diferente e incluir de acordo com a etapa/resposta.
-- criar personagem masculino e feminino na intro
-- botão para trocar de usuário
-- gif das luz piscando no bg
-- som ambiente
-- som de acerto e erro
-- novo nome: QuizDev
-- Traduzir as perguntas
-- Alinhar as perguntas
-- Simplificar as imagens de vidas pra combinar com bg
+## Ferramentas usadas
+- Phaser (Game Framework) - https://phaser.io/
+- JavaScript (Linguagem de Programação) - https://www.javascript.com/
+- QuizAPI (API de Questões) - https://quizapi.io/
+- iStock (Imagens) - https://www.istockphoto.com/
+- ColourLovers (Paleta de cores) - https://www.colourlovers.com/
+- PixaBay (Efeitos Sonoros) - https://pixabay.com/pt/sound-effects/
+- ChatGPT (Textos e traduções) - https://chat.openai.com/
+- StackOverflow (Dúvidas gerais) - https://stackoverflow.com/
+- GitHub (Repositório) - https://github.com/hugojunior/faculdade-estagio-1
+

@@ -1,5 +1,5 @@
 @import url("normalize.css");
-@import url("https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap');
 
 body {
   margin: 0;
@@ -396,32 +396,29 @@ a {
   height: 427px;
   position: relative;
   line-height: 22px;
-  font-size: 14px;
+  font-size: 30px;
   border: 1px solid #fab40a;
+  text-align: center;
 }
 
 #boxEe1 .boxEe1Container h1 {
   padding: 10px 0 0 0;
   margin: 0;
+  line-height: 35px;
   font-size: 28px;
   color: #fab40a;
+  font-family: 'Source Serif Pro', serif;
 }
 
-#boxEe1 .boxEe1Container .text {
-  position: absolute;
-  left: 250px;
-  top: 20px;
-  height: 200px;
-  height: 386px;
-  width: 528px;
+#boxEe1 .boxEe1Container p {
+  font-family: 'Source Serif Pro', serif;
 }
 
 #boxEe1 .boxEe1Container img {
   border-radius: 50%;
   border: 2px solid #25212c;
-  position: absolute;
-  left: 20px;
-  top: 20px;
+  margin: 20px auto 10px auto;
+  display: block;
 }
 
 #boxEe1 #closeEe1 {

@@ -10,7 +10,7 @@ https://quizapi.io/api/v1/questions?apiKey=7WTesgQw8zskF6UzhqGxWaVwVQx66EQU9O32I
 - gif das luz piscando no bg
 - som ambiente
 - som de acerto e erro
-- nono nome: QuizDev
+- novo nome: QuizDev
 - Traduzir as perguntas
 - Alinhar as perguntas
 - Simplificar as imagens de vidas pra combinar com bg

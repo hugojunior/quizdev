@@ -1,88 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser-arcade-physics.js"></script>
-    <title>QuizDev</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #363a3c;
-            color: #ffffff;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-        }
-
-        h1 {
-            font-size: 20px;
-            margin: 0;
-            padding: 0;
-        }
-
-        a {
-            color: yellow;
-        }
-        #container {
-            margin: 0 auto;
-            display: block;
-            width: 800px;
-            padding: 20px 0;
-        }
-        #qTags {
-            background-color: #999;
-            color: #000;
-            padding: 2px 5px;
-            border-radius: 3px;
-            border: none;
-            font-size: 12px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizDev - Jogando e aprendendo!</title>
+    <script src="js/phaser-arcade-physics.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
     <script>
-        var Login = new Phaser.Class({
-
+        var User = new Phaser.Class({
+            
             Extends: Phaser.Scene,
         
             initialize:
         
-            function Login ()
+            function User ()
             {
-                Phaser.Scene.call(this, { key: 'login'});
+                Phaser.Scene.call(this, { key: 'user'});
             },
         
             preload: function ()
             {
-                this.load.html('formName', 'html/form-name.html');
-                this.load.image('logo', 'images/logo2.png');
-                this.load.image('bgLogin', 'images/bg-login2.jpg');
-                
-                this.load.audio("music", ["sounds/game-music.mp3"]);
+                this.load.html('userForm', 'html/scenes/user/form.html');
+                this.load.audio('music', ['sounds/game-music.mp3']);
+                this.load.image('logo200x132', 'images/logo-200x132.png');
+                this.load.image('personLaptop77x100', 'images/person-laptop-77x100.png');
+                this.load.image('personBike60x79', 'images/person-bike-60x79.png');
+                this.load.image('backgroundUser', 'images/bg-scene-user.jpg');
             },
         
             create: function ()
             {
                 this.sound.removeAll();
-                var music = this.sound.add("music", {loop: true, volume: 0.2}).play();
+                var music = this.sound.add('music', {loop: true, volume: 0.2}).play();
 
-                this.add.image(400, 214, 'bgLogin');
-                this.add.image(400, 130, 'logo');
+                this.add.image(400, 214, 'backgroundUser');
+                this.add.image(250, 210, 'personLaptop77x100');
+                this.add.image(400, 150, 'logo200x132');
+
+                var personMotion = this.add.image(0, 390, 'personBike60x79');
+                const tween = this.add.tween({
+                    targets: personMotion,
+                    x: 1500,
+                    duration: 20000,
+                    yoyo: false,
+                    ease: 'Linear',
+                    repeat: -1
+                });
                 
-                var element = this.add.dom(400, 300).setInteractive().createFromCache('formName');
-
-                element.addListener('click');
-                element.on('click', function(event) {
-                    if (event.target.name === 'showInfo')
-                    {
-                        var inputText = this.getChildByName('name');
-            
-                        if (inputText.value !== '')
-                        {
-                            this.removeListener('click');
-                            this.setVisible(false);
-                            var name = inputText.value;
-                            this.scene.scene.start('info', { name: name.substring(0, 15) });    
-                        }
+                this.add.dom(380, 280).setInteractive().createFromCache('userForm');
+                document.querySelector('.btnUser').addEventListener('click', () => {
+                    var nameUser = document.querySelector('.nameUser');
+                    if (nameUser.value !== '') {
+                        this.scene.start('info', { name: nameUser.value.substring(0, 15) });    
                     }
                 });
             }
@@ -106,26 +78,22 @@
 
             preload: function ()
             {
-                this.load.image('bgInfo', 'images/bg-info.jpg');
-                this.load.html('infoText', 'html/info.html');
+                this.load.image('backgroundInfo', 'images/bg-scene-info.jpg');
+                this.load.image('logo100x66', 'images/logo-100x66.png');
+                this.load.html('infoBriefing', 'html/scenes/info/briefing.html');
             },
         
             create: function ()
             {
-                this.add.image(400, 214, 'bgInfo');
-                this.add.text(20, 20, 'Bem-vindo,', { fontFamily: "'Courier New', Courier, monospace", fontSize: 20, color: "#333333", fontWeight: 'bold' });
-                this.add.text(20, 40, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 30, color: "#333333" });
-
-                var element = this.add.dom(400, 250).setInteractive().createFromCache('infoText');
-                element.addListener('click');
-                element.on('click', function(event) {
-                    if (event.target.name === 'startGame')
-                    {                  
-                        this.scene.scene.start('game', { name: this.scene.name.substring(0, 15) });
-                    }
+                this.add.image(400, 214, 'backgroundInfo');
+                this.add.image(400, 50, 'logo100x66');
+                this.add.text(27, 40, 'Bem-vindo(a),', { fontFamily: "'Courier New', Courier, monospace", fontSize: 20, color: '#292737', fontWeight: 'bold' });
+                this.add.text(27, 60 , this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 30, color: '#292737' });
+                this.add.dom(400, 250).setInteractive().createFromCache('infoBriefing');                
+                document.querySelector('.btnInfo').addEventListener('click', () => {
+                    this.scene.start('game', { name: this.name.substring(0, 15) });
                 });
             }
-        
         });
 
         var Game = new Phaser.Class({
@@ -144,75 +112,74 @@
                 this.name = data.name;
                 this.initialCountdownTime = 180; //segundos
                 this.lifes = 3;
-                this.positionStart = 0;
                 this.questionsCorrects = 0;
                 this.questionsIds = [];
                 this.questionsJson = {};
                 this.currentQuestion = null;
                 this.gameEnd = false;
+                this.helpBox = false;
+                this.infoBox = false;
+                this.finished = false;
             },
 
             preload: function ()
             {   
                 this.input.keyboard.enabled = true;
-                this.load.html(`gameOver`, `html/game-over.html`); 
-                this.load.html(`success`, `html/success.html`);            
-                this.load.image('logoProg', 'images/prog2.png');
-                this.load.image('lifes3', 'images/lifes3.png');
-                this.load.image('lifes2', 'images/lifes2.png');
-                this.load.image('lifes1', 'images/lifes1.png');
-                this.load.image('lifes0', 'images/lifes0.png');
-                this.load.image('red', 'images/red.png');
-                this.load.image('green', 'images/green.png');
-                this.load.json('questionsJson', 'questions.json');
+
+                this.load.json('questionsJson', 'js/questions.json');
                 this.load.audio("sGameOver", ["sounds/game-over.mp3"]);
                 this.load.audio("sGameSuccess", ["sounds/game-success.mp3"]);
                 this.load.audio("sQuestionCorrect", ["sounds/question-correct.mp3"]);
-                this.load.audio("sQuestionIncorrect", ["sounds/question-incorrect.mp3"]);                
+                this.load.audio("sQuestionIncorrect", ["sounds/question-incorrect.mp3"]);   
+                this.load.html('gameOver', 'html/scenes/game/game-over.html'); 
+                this.load.html('gameFinished', 'html/scenes/game/finished.html');  
+                this.load.html('gameHelp', 'html/scenes/game/help.html');  
+                this.load.html('gameInfo', 'html/scenes/game/info.html');   
+                this.load.html('gameEe1', 'html/scenes/game/ee1.html');                   
+                this.load.image('personBike60x79', 'images/person-bike-60x79.png');
+                this.load.image('particlesGreen', 'images/particles-green.png');
+                this.load.image('boxName', 'images/box-name.png');
+                this.load.image('boxTime', 'images/box-time.png');
+                this.load.image('logoGame156x66', 'images/logo-game-156x66.png');
+
                 this.loadQuestionsHTML();
+                this.loadLifeImages();
 
                 if(this.isDay()) {
-                    this.load.image('bg', 'images/bg-dia-800.jpg');
+                    this.load.image('backgroundGame', 'images/bg-scene-game-day.jpg');
                 } else {
-                    this.load.image('bg', 'images/bg-noite-800.jpg');
+                    this.load.image('backgroundGame', 'images/bg-scene-game-night.jpg');
                 }
             },
         
             create: function ()
             {
+                this.add.image(400, 214, 'backgroundGame');
+                this.add.image(135, 35, 'boxName');
+                this.add.image(710, 35, 'boxTime');
+                this.add.image(420, 40, 'logoGame156x66');
                 this.sGameOver = this.sound.add("sGameOver", {loop:false, volume: 1});
                 this.sGameSuccess = this.sound.add("sGameSuccess", {loop:false, volume: 1});
                 this.sQuestionCorrect = this.sound.add("sQuestionCorrect", {loop:false, volume: 1});
-                this.sQuestionIncorrect = this.sound.add("sQuestionIncorrect", {loop:false, volume: 1});
-
-                this.add.image(400, 214, 'bg');
-                              
-                this.greenParticle = this.add.particles('green');
-                this.redParticle = this.add.particles('red');
-                this.prog = this.add.image(34, 380, 'logoProg'); 
-
-                this.add.text(10, 10, 'Jogando como:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
-                this.add.text(10, 30, this.name + '!', { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
-                this.add.text(8, 54, '[Trocar]', { fontFamily: "'Courier New', Courier, monospace", fontSize: 15, color: "#333333" })
-                .setInteractive()
-                .on('pointerover', function () {
-                    this.setStyle({fill: '#FFFF00'});
-                })
-                .on('pointerout', function () {
-                    this.setStyle({fill: '#333333'});
-                })
-                .on('pointerdown', function () {
-                    this.scene.restart();
-                    this.scene.start('login');
-                }, this);
-
-                this.lifesBox = this.add.image(410, 35, 'lifes3');
-
-                this.add.text(630, 10, 'Tempo restante:', { fontFamily: "'Courier New', Courier, monospace", fontSize: 18, color: "#333333", fontWeight: 'bold' });
-                
-                this.countdownText = this.add.text(715, 30, this.formatTime(this.initialCountdownTime), { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#333333" });
+                this.sQuestionIncorrect = this.sound.add("sQuestionIncorrect", {loop:false, volume: 1});              
+                this.particlesGreen = this.add.particles('particlesGreen');
+                this.personBike60x79 = this.add.image(34, 380, 'personBike60x79'); 
+                this.boxLifes = this.add.image(744, 52, 'boxLifes3');
+                this.add.text(80, 25, this.name, { fontFamily: "'Courier New', Courier, monospace", fontSize: 15, color: "#EDEEEA" });
+                this.countdownText = this.add.text(695, 20, this.formatTime(this.initialCountdownTime), { fontFamily: "'Courier New', Courier, monospace", fontSize: 25, color: "#EDEEEA" });
                 this.timedEvent = this.time.addEvent({ delay: 1000, callback: this.onEvent, callbackScope: this, loop: true });
-
+                this.add.text(73, 46, 'trocar', { fontFamily: "'Courier New', Courier, monospace", fontSize: 11, color: "#EDEEEA" })
+                    .setInteractive()
+                    .on('pointerover', function () {
+                        this.setStyle({fill: '#EE642E'});
+                    })
+                    .on('pointerout', function () {
+                        this.setStyle({fill: '#EDEEEA'});
+                    })
+                    .on('pointerdown', function () {
+                        this.scene.restart();
+                        this.scene.start('user');
+                    }, this);
                 this.questionsJson = this.cache.json.get('questionsJson').sort(() => Math.random() - 0.5);
                 this.questionsJson.forEach((question) => {
                     this.questionsIds.push(question.id);
@@ -220,7 +187,7 @@
                 this.currentQuestion = this.questionsIds[0];               
                 this.showQuestion();
 
-                if(document.querySelector('#questionHTML')) {
+                if(document.querySelector('#boxQuestion')) {
                     this.input.keyboard.on('keydown-ONE', (event) => {
                         this.checkQuestion(this.currentQuestion, 'answer_a', 1);
                     });
@@ -234,12 +201,26 @@
                         this.checkQuestion(this.currentQuestion, 'answer_d', 4);
                     });
                 }
+
+                this.input.keyboard.on('keydown-F1', (event) => {
+                    event.preventDefault();
+                    this.showHelp();
+                });
+                this.input.keyboard.on('keydown-I', (event) => {
+                    event.preventDefault();
+                    this.showInfo();
+                });
+                this.input.keyboard.on('keydown-F', (event) => {
+                    event.preventDefault();
+                    this.pressF();
+                });
             },
 
             showQuestion: function(questionID) {
                 var questionID = questionID || this.currentQuestion;
-                this.questionHTML = this.add.dom(400, 200).setInteractive().createFromCache(`question-${questionID}`);
-                document.querySelector("#questionInfo").innerHTML = `Questão ${this.getQuestionIndexByID(this.questionsJson, questionID)+1} de ${this.questionsJson.length} // Acertos: ${this.questionsCorrects}`;            
+                this.questionHTML = this.add.dom(400, 208).setInteractive().createFromCache(`question${questionID}`);
+                document.querySelector("#questionPosition").innerHTML = `Questão ${this.getQuestionIndexByID(this.questionsJson, questionID)+1} de ${this.questionsJson.length}`;            
+                document.querySelector("#questionCorrect").innerHTML = `Acertos: ${this.questionsCorrects}`; 
             },
 
             checkQuestion: function(questionID, answerID, keyNumber) {
@@ -256,7 +237,7 @@
                     }
 
                     if(this.questionsJson.length === (this.getQuestionIndexByID(this.questionsJson, questionID)+1)) {
-                        this.success();
+                        this.gameFinish();
                     } else {
                         var nextQuestion = this.getNextQuestionID(this.questionsJson, questionID);
                         this.currentQuestion = nextQuestion;
@@ -302,16 +283,21 @@
 
             updateLifes: function() {
                 this.lifes -= 1;
-                this.lifesBox.destroy();
-                this.lifesBox = this.add.image(410, 35, `lifes${this.lifes}`);
+                this.boxLifes.destroy();
+                this.boxLifes = this.add.image(744, 52, `boxLifes${this.lifes}`);
             },
             
             loadQuestionsHTML: function() {
                 var questionsIds = [792,983,419,651,593,606,901,243,850,845,1066,829,842,1058,471,689,453,629,801,295];
                 questionsIds.forEach((id) => {
-                    var file = this.load.html(`question-${id}`, `html/question-${id}.html`);
-                    file.start();
+                    this.load.html(`question${id}`, `html/scenes/game/questions/${id}.html`).start();
                 });
+            },
+
+            loadLifeImages: function() {
+                for(var i=0;i<=3;i++) {
+                    this.load.image(`boxLifes${i}`, `images/box-stars-${i}.png`);
+                }
             },
 
             isDay: function() {
@@ -320,41 +306,41 @@
             },
 
             gameOver: function(text) {
-                this.timedEvent.remove(false);
                 this.input.keyboard.enabled = false;
                 this.gameEnd = true;
                 this.sGameOver.play();
-                var overHTML = this.add.dom(400, 200).setInteractive().createFromCache('gameOver');
-                document.querySelector("#overText").innerHTML = text || '';
-                document.querySelector("#finalScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
+                this.timedEvent.remove(false);
+                var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameOver');
+                document.querySelector("#gameOverMessage").innerHTML = text || '';
+                document.querySelector("#gameOverScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
                 document.querySelector("#playAgain").addEventListener('click', () => {
                     this.scene.restart();
                 });
             },
 
-            success: function() {
-                this.input.keyboard.enabled = false;
+            gameFinish: function() {
+                //this.input.keyboard.enabled = false;
                 this.gameEnd = true;
+                this.gameFinished = true;
                 this.sGameSuccess.play();
-                var overHTML = this.add.dom(400, 200).setInteractive().createFromCache('success');
+                this.timedEvent.remove(false);
+                var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
                 document.querySelector("#playAgain").addEventListener('click', () => {
                     this.scene.restart();
                 });
 
-                this.prog.destroy();
-                this.prog = this.physics.add.image(760, 380, 'logoProg');
-                this.prog.setVelocity(200, 200);
-                this.prog.setBounce(1, 1);
-                this.prog.setCollideWorldBounds(true);
+                this.personBike60x79.destroy();
+                this.personBike60x79 = this.physics.add.image(760, 380, 'personBike60x79');
+                this.personBike60x79.setVelocity(200, 200);
+                this.personBike60x79.setBounce(1, 1);
+                this.personBike60x79.setCollideWorldBounds(true);
 
-                var emitter = this.greenParticle.createEmitter({
+                var emitter = this.particlesGreen.createEmitter({
                     speed: 100,
                     scale: { start: 0.5, end: 0 },
                     blendMode: 'ADD'
                 });
-                emitter.startFollow(this.prog);
-
-                console.log('VENCEU!');
+                emitter.startFollow(this.personBike60x79);
             },
 
             onEvent: function() {
@@ -372,18 +358,17 @@
                 this.input.keyboard.enabled = false;
                 
                 if(correct){ 
-                    var emitter = this.greenParticle.createEmitter({
+                    var emitter = this.particlesGreen.createEmitter({
                         speed: 100,
-                        scale: { start: 0.4, end: 0 },
-                        blendMode: 'ADD',
-                        lifespan: 800,
+                        scale: { start: 0.5, end: 0 },
+                        blendMode: 'ADD'
                     });
-                    emitter.startFollow(this.prog);
+                    emitter.startFollow(this.personBike60x79);
                 }
 
                 const tween = this.add.tween({
-                    targets: this.prog,
-                    x: this.prog.x+36.5,
+                    targets: this.personBike60x79,
+                    x: this.personBike60x79.x+36.5,
                     duration: 1000,
                     yoyo: false,
                     ease: 'Linear',
@@ -393,6 +378,44 @@
                         emitter && emitter.stop();
                     }
                 });
+            },
+
+            showHelp: function() {
+                if(!this.helpBox) {
+                    this.helpBox = this.add.dom(400, 208).setInteractive().createFromCache('gameHelp');
+                    document.querySelector("#closeHelp").addEventListener('click', () => {
+                        this.showHelp();
+                    });
+                } else {
+                    this.helpBox.destroy();
+                    this.helpBox = false;
+                }
+            },
+
+            showInfo: function() {
+                if(!this.infoBox) {
+                    this.infoBox = this.add.dom(400, 208).setInteractive().createFromCache('gameInfo');
+                    document.querySelector("#closeInfo").addEventListener('click', () => {
+                        this.showInfo();
+                    });
+                } else {
+                    this.infoBox.destroy();
+                    this.infoBox = false;
+                }
+            },
+
+            pressF: function() {
+                if(this.gameFinished) {
+                    if(!this.ee1) {
+                        this.ee1 = this.add.dom(400, 214).setInteractive().createFromCache('gameEe1');
+                        document.querySelector("#closeEe1").addEventListener('click', () => {
+                            this.pressF();
+                        });
+                    } else {
+                        this.ee1.destroy();
+                        this.ee1 = false;
+                    }
+                }
             },
 
             formatTime(seconds){
@@ -422,7 +445,7 @@
             parent: 'game',
             width: 800,
             height: 429,
-            backgroundColor: '#000000',
+            backgroundColor: '#292737',
             autoCenter: true,
             dom: {
                 createContainer: true
@@ -430,10 +453,10 @@
             physics: {
                 default: 'arcade',
                 arcade: {
-                    gravity: { y: 200 }
+                    gravity: { y: 50 }
                 }
             },
-            scene: [Login, Info, Game]
+            scene: [User, Info, Game]
         };
         
         var game = new Phaser.Game(config);
@@ -446,7 +469,8 @@
             <li>Phaser (Game Framework) - <a href="https://phaser.io/" target="_blank">https://phaser.io/</a></li>
             <li>JavaScript (Linguagem de Programação) - <a href="https://www.javascript.com/" target="_blank">https://www.javascript.com/</a></li>
             <li>QuizAPI (API de Questões) - <a href="https://quizapi.io/" target="_blank">https://quizapi.io/</a></li>
-            <li>ShutterStock (Imagens) - <a href="https://www.shutterstock.com/pt/" target="_blank">https://www.shutterstock.com/pt/</a></li>
+            <li>iStock (Imagens) - <a href="https://www.istockphoto.com/" target="_blank">https://www.istockphoto.com/</a></li>
+            <li>ColourLovers (Paleta de cores) - <a href="https://www.colourlovers.com/" target="_blank">https://www.colourlovers.com/</a></li>
             <li>PixaBay (Efeitos Sonoros) - <a href="https://pixabay.com/pt/sound-effects/" target="_blank">https://pixabay.com/pt/sound-effects/</a></li>
             <li>ChatGPT (Textos e traduções) - <a href="https://chat.openai.com/" target="_blank">https://chat.openai.com/</a></li>
             <li>StackOverflow (Dúvidas gerais) - <a href="https://stackoverflow.com/" target="_blank">https://stackoverflow.com/</a></li>

@@ -332,6 +332,8 @@
         var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
         document.querySelector("#gameFinishedScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
         document.querySelector("#playAgain").addEventListener('click', () => {
+          this.gameEnd = false;
+          this.gameFinished = false;
           this.scene.restart();
         });
         this.personBike60x79.destroy();

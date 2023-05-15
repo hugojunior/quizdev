@@ -129,6 +129,7 @@
         this.load.audio("sGameSuccess", ["sounds/game-success.mp3"]);
         this.load.audio("sQuestionCorrect", ["sounds/question-correct.mp3"]);
         this.load.audio("sQuestionIncorrect", ["sounds/question-incorrect.mp3"]);
+        this.load.audio("sQuestionTime", ["sounds/question-time.mp3"]);
         this.load.html('gameOver', 'html/scenes/game/game-over.html');
         this.load.html('gameFinished', 'html/scenes/game/finished.html');
         this.load.html('gameHelp', 'html/scenes/game/help.html');
@@ -165,6 +166,10 @@
           volume: 1
         });
         this.sQuestionIncorrect = this.sound.add("sQuestionIncorrect", {
+          loop: false,
+          volume: 1
+        });
+        this.sQuestionTime = this.sound.add("sQuestionTime", {
           loop: false,
           volume: 1
         });
@@ -333,6 +338,7 @@
       gameOver: function (text) {
         this.input.keyboard.enabled = false;
         this.gameEnd = true;
+        this.sQuestionTime.stop();
         this.sGameOver.play();
         this.timedEvent.remove(false);
         var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameOver');
@@ -345,6 +351,7 @@
       gameFinish: function () {
         this.gameEnd = true;
         this.gameFinished = true;
+        this.sQuestionTime.stop();
         this.sGameSuccess.play();
         this.timedEvent.remove(false);
         var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
@@ -375,6 +382,12 @@
           this.questionHTML.destroy();
           this.gameOver('[Seu tempo esgotou]');
         } else {
+          if(this.initialCountdownTime === 10) {
+            this.sQuestionTime.play();
+          }
+          if(this.initialCountdownTime > 10) {
+            this.sQuestionTime.stop();
+          }  
           this.initialCountdownTime -= 1;
           this.countdownText.setText(this.formatTime(this.initialCountdownTime));
         }

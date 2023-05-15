@@ -176,6 +176,11 @@
           fontSize: 15,
           color: "#EDEEEA"
         });
+        this.add.text(687, 412, '[F1] para ajuda', {
+          fontFamily: "'Courier New', Courier, monospace",
+          fontSize: 12,
+          color: "#EDEEEA"
+        });
         this.countdownText = this.add.text(695, 20, this.formatTime(this.initialCountdownTime), {
           fontFamily: "'Courier New', Courier, monospace",
           fontSize: 25,
@@ -287,6 +292,20 @@
         if (correct) {
           this.sQuestionCorrect.play();
           this.questionsCorrects += 1;
+          this.initialCountdownTime += 10;
+          var emitter = this.particlesGreen.createEmitter({
+            tint: 0x00ff00,
+            alpha: { start: 1, end: 0 },
+            scale: { start: 0.5, end: 1.5 },
+            speed: {random: [20, 100] },
+            accelerationY:  {random: [-100, 200] },
+            rotate: { min: -180, max: 180 },
+            lifespan: { min: 300, max: 800 },
+            frequency: 20,
+            maxParticles: 4
+          });
+          emitter.startFollow(this.countdownText);
+          setTimeout(()=> emitter.stop(), 500);
         }
         this.tweenProg(correct);
         return correct;
@@ -324,7 +343,6 @@
         });
       },
       gameFinish: function () {
-        //this.input.keyboard.enabled = false;
         this.gameEnd = true;
         this.gameFinished = true;
         this.sGameSuccess.play();

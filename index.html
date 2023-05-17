@@ -59,7 +59,7 @@
           var nameUser = document.querySelector('.nameUser');
           if (nameUser.value !== '') {
             this.scene.start('info', {
-              name: nameUser.value.substring(0, 15)
+              name: nameUser.value
             });
           }
         });
@@ -97,7 +97,7 @@
         this.add.dom(400, 250).setInteractive().createFromCache('infoBriefing');
         document.querySelector('.btnInfo').addEventListener('click', () => {
           this.scene.start('game', {
-            name: this.name.substring(0, 15)
+            name: this.name
           });
         });
       }
@@ -134,6 +134,7 @@
         this.load.html('gameFinished', 'html/scenes/game/finished.html');
         this.load.html('gameHelp', 'html/scenes/game/help.html');
         this.load.html('gameInfo', 'html/scenes/game/info.html');
+        this.load.html('gameScore', 'html/scenes/game/score.html');
         this.load.html('gameEe1', 'html/scenes/game/ee1.html');
         this.load.image('personBike60x79', 'images/person-bike-60x79.png');
         this.load.image('particlesGreen', 'images/particles-green.png');
@@ -181,7 +182,7 @@
           fontSize: 15,
           color: "#EDEEEA"
         });
-        this.add.text(687, 412, '[F1] para ajuda', {
+        this.add.text(629, 412, '[F1] Ajuda - [P] Placar', {
           fontFamily: "'Courier New', Courier, monospace",
           fontSize: 12,
           color: "#EDEEEA"
@@ -236,6 +237,10 @@
         this.input.keyboard.on('keydown-F1', event => {
           event.preventDefault();
           this.showHelp();
+        });
+        this.input.keyboard.on('keydown-P', event => {
+          event.preventDefault();
+          this.showScore();
         });
         this.input.keyboard.on('keydown-I', event => {
           event.preventDefault();
@@ -354,11 +359,13 @@
         this.sQuestionTime.stop();
         this.sGameSuccess.play();
         this.timedEvent.remove(false);
+        this.setScore();
         var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
-        document.querySelector("#gameFinishedScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
+        document.querySelector("#gameFinishedScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões<br> Pontuação: <strong>${this.userScore}</strong> [P]`;
         document.querySelector("#playAgain").addEventListener('click', () => {
           this.gameEnd = false;
-          this.gameFinished = false;
+          this.gameEnd = false;
+          this.userScore = false;
           this.scene.restart();
         });
         this.personBike60x79.destroy();
@@ -428,6 +435,39 @@
           this.helpBox.destroy();
           this.helpBox = false;
         }
+      },
+      showScore: function () {
+        if (!this.scoreBox) {
+          var scoreLocal = JSON.parse(localStorage.getItem("score") || "[]").sort((a, b) => {
+            return b.score - a.score;
+          }).slice(0, 6);
+          this.scoreBox = this.add.dom(400, 208).setInteractive().createFromCache('gameScore');
+          document.querySelector("#boxScore ol").innerHTML = new Array(6)
+          .fill('<li>[vazio]</li>')
+          .map((item, index) => {
+            if(scoreLocal[index]) {
+              var currentUser = this.name === scoreLocal[index].name ? ' <small>(você)</small>' : '';
+              return `<li>${scoreLocal[index].score} - ${scoreLocal[index].name}${currentUser}</li>`;
+            }
+            return item;
+          })
+          .join('');
+          document.querySelector("#closeScore").addEventListener('click', () => {
+            this.showScore();
+          });
+        } else {
+          this.scoreBox.destroy();
+          this.scoreBox = false;
+        }
+      },
+      setScore: function () {
+        var scoreLocal = JSON.parse(localStorage.getItem("score") || "[]");
+        this.userScore = Math.round(((this.questionsCorrects*100)+(this.initialCountdownTime*5))*1000000/3800);
+        scoreLocal.push({
+          name: this.name,
+          score: this.userScore
+        });
+        localStorage.setItem("score", JSON.stringify(scoreLocal));
       },
       showInfo: function () {
         if (!this.infoBox) {

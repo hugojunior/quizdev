@@ -59,7 +59,7 @@
           var nameUser = document.querySelector('.nameUser');
           if (nameUser.value !== '') {
             this.scene.start('info', {
-              name: nameUser.value.substring(0, 15)
+              name: nameUser.value
             });
           }
         });
@@ -97,7 +97,7 @@
         this.add.dom(400, 250).setInteractive().createFromCache('infoBriefing');
         document.querySelector('.btnInfo').addEventListener('click', () => {
           this.scene.start('game', {
-            name: this.name.substring(0, 15)
+            name: this.name
           });
         });
       }

@@ -218,6 +218,7 @@ a {
 #boxInfo,
 #boxHelp,
 #boxEe1,
+#boxScore,
 #boxGameFinished {
   width: 800px;
   text-align: center;
@@ -261,15 +262,17 @@ a {
 }
 
 #boxInfo,
-#boxHelp {
+#boxHelp,
+#boxScore {
   background-color: #25212c;
   border: 1px solid #292737;
 }
 
-#boxInfo .boxInfoContainer {
+#boxInfo .boxInfoContainer,
+#boxScore .boxScoreContainer {
   margin: 0 auto;
   padding: 20px;
-  width: 280px;
+  width: 300px;
   height: 220px;
   position: relative;
   line-height: 22px;
@@ -291,7 +294,8 @@ a {
   border: 2px solid #fab40a;
 }
 
-#boxInfo #closeInfo {
+#boxInfo #closeInfo,
+#boxScore #closeScore {
   display: block;
   width: 100%;
   background-color: #25212c;
@@ -342,7 +346,7 @@ a {
   background-color: rgba(41, 39, 55, 0.9);
   padding: 20px 0px 0px 0px;
   width: 380px;
-  height: 232px;
+  height: 234px;
   position: relative;
   line-height: 22px;
   font-size: 14px;
@@ -435,4 +439,22 @@ a {
   font-size: 12px;
   border-top: 1px solid #fab40a;
   border-bottom: 1px solid #fab40a;
+}
+
+#boxScore .boxScoreContainer h1 {
+  color: #fab40a;
+  font-size: 26px;
+  margin: 5px 0 0 0;
+  text-align: center;
+  padding: 0 0 10px 0;
+  border-bottom: 2px solid #fab40a;
+}
+
+#boxScore li {
+  text-align: left;
+}
+
+#boxScore li small {
+  color: #fab40a;
+  font-size: 12px;
 }

@@ -1,5 +1,5 @@
 @import url("normalize.css");
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap");
 
 body {
   margin: 0;
@@ -13,7 +13,7 @@ h1 {
 }
 
 a {
-  color: #ed9c7b;
+  color: #ffb500;
 }
 
 .colour-1 {
@@ -40,9 +40,37 @@ a {
   color: #fab40a;
 }
 
-#game {
+.blink {
+  animation: blink 1s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.creditos a {
+  text-decoration: none;
+}
+
+.creditos {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 20px;
+  color: #edeeea;
+}
+
+canvas {
   margin: 0;
   padding: 0;
+  outline: 1px solid #8682a0;
 }
 
 #container {
@@ -51,6 +79,20 @@ a {
   width: 800px;
   padding: 20px 0;
 }
+
+#container hr {
+  border-bottom: 1px solid #292737;
+  border-top: 1px solid #8682a0;
+}
+
+#container h1 {
+  text-align: center;
+}
+
+#container h1 a {
+  text-decoration: none;
+}
+
 #qTags {
   background-color: #999;
   color: #000;
@@ -73,14 +115,14 @@ a {
   border-radius: 0px;
   padding: 10px 20px;
   text-align: center;
-  border: 2px solid #aaaaaa;
+  border: 2px solid #8682a0;
   background-color: #edeeea;
   width: 246px;
-  box-shadow: 3px 6px #aaaaaa;
+  box-shadow: 3px 6px rgba(134, 130, 160, 0.3);
 }
 .nameUser:focus {
   outline: none;
-  border: 2px solid #ed9c7b;
+  border: 2px solid #a77700;
 }
 
 .btnUser {
@@ -90,22 +132,23 @@ a {
   text-align: center;
   margin-top: 10px;
   color: #292737;
-  background-color: #ed9c7b;
+  background-color: #fab40a;
   font-weight: bold;
-  border: 2px solid #ee642e;
+  border: 2px solid #a77700;
   width: 290px;
-  box-shadow: 3px 6px #aaaaaa;
+  box-shadow: 3px 6px rgba(134, 130, 160, 0.3);
 }
 
 #boxBriefing {
   width: 800px;
   font-size: 14px;
-  color: #292737;
+  color: #fff;
+  text-shadow: 2px 1px #292737;
 }
 
 #boxBriefing .boxBriefingContainer {
   margin: 0 auto;
-  background-color: rgba(41, 39, 55, 0.25);
+  background-color: rgba(134, 130, 160, 0.2);
   padding: 20px;
   width: 700px;
   height: 260px;
@@ -132,11 +175,11 @@ a {
   text-align: center;
   margin-top: 10px;
   color: #292737;
-  background-color: #ed9c7b;
+  background-color: #fab40a;
   font-weight: bold;
-  border: 2px solid #ee642e;
+  border: 2px solid #a77700;
   width: 200px;
-  box-shadow: 3px 6px #aaaaaa;
+  box-shadow: 3px 6px rgba(134, 130, 160, 0.3);
 }
 
 #boxQuestion {
@@ -230,7 +273,7 @@ a {
   background-color: rgba(41, 39, 55, 0.9);
   padding: 20px 0px 0px 0px;
   width: 280px;
-  height: 232px;
+  height: 231px;
   position: relative;
   line-height: 22px;
   font-size: 14px;
@@ -378,7 +421,7 @@ a {
   border: 1px solid #fab40a;
 }
 
-#boxGameFinished #pressF {
+#boxGameFinished #credits {
   display: inline-block;
   width: 32px;
   background-color: transparent;
@@ -397,12 +440,13 @@ a {
   text-align: left;
   margin: 0 auto;
   width: 798px;
-  height: 427px;
+  height: 420px;
   position: relative;
   line-height: 22px;
   font-size: 30px;
-  border: 1px solid #fab40a;
+  border: none;
   text-align: center;
+  padding-top: 30px;
 }
 
 #boxEe1 .boxEe1Container h1 {
@@ -411,11 +455,12 @@ a {
   line-height: 35px;
   font-size: 28px;
   color: #fab40a;
-  font-family: 'Source Serif Pro', serif;
+  font-weight: normal;
+  font-family: "Source Serif Pro", serif;
 }
 
 #boxEe1 .boxEe1Container p {
-  font-family: 'Source Serif Pro', serif;
+  font-family: "Source Serif Pro", serif;
 }
 
 #boxEe1 .boxEe1Container img {
@@ -437,8 +482,8 @@ a {
   border: 0;
   font-weight: bold;
   font-size: 12px;
-  border-top: 1px solid #fab40a;
-  border-bottom: 1px solid #fab40a;
+  border-top: 1px solid #8682a0;
+  border-bottom: 1px solid #8682a0;
 }
 
 #boxScore .boxScoreContainer h1 {

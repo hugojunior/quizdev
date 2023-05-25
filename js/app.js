@@ -8,7 +8,7 @@ var User = new Phaser.Class({
   preload: function () {
     this.load.html('userForm', 'html/scenes/user/form.html');
     this.load.audio('music', ['sounds/game-music.mp3']);
-    this.load.image('logo200x132', 'images/logo-200x132.png');
+    this.load.image('logo200x132', 'images/logo-200x132-white.png');
     this.load.image('personLaptop77x100', 'images/person-laptop-77x100.png');
     this.load.image('personBike60x79', 'images/person-bike-60x79.png');
     this.load.image('backgroundUser', 'images/bg-scene-user.jpg');
@@ -54,7 +54,7 @@ var Info = new Phaser.Class({
   },
   preload: function () {
     this.load.image('backgroundInfo', 'images/bg-scene-info.jpg');
-    this.load.image('logo100x66', 'images/logo-100x66.png');
+    this.load.image('logo100x66', 'images/logo-100x66-white.png');
     this.load.html('infoBriefing', 'html/scenes/info/briefing.html');
   },
   create: function () {
@@ -63,13 +63,13 @@ var Info = new Phaser.Class({
     this.add.text(27, 40, 'Bem-vindo(a),', {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 20,
-      color: '#292737',
+      color: '#ffffff',
       fontWeight: 'bold'
     });
     this.add.text(27, 60, this.name + '!', {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 30,
-      color: '#292737'
+      color: '#fab40a'
     });
     this.add.dom(400, 250).setInteractive().createFromCache('infoBriefing');
     document.querySelector('.btnInfo').addEventListener('click', () => {
@@ -294,7 +294,7 @@ var Game = new Phaser.Class({
     this.sQuestionTime.stop();
     this.sGameOver.play();
     this.timedEvent.remove(false);
-    var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameOver');
+    this.add.dom(400, 208).setInteractive().createFromCache('gameOver');
     document.querySelector("#gameOverMessage").innerHTML = text || '';
     document.querySelector("#gameOverScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões!`;
     document.querySelector("#playAgain").addEventListener('click', () => {
@@ -308,13 +308,10 @@ var Game = new Phaser.Class({
     this.sGameSuccess.play();
     this.timedEvent.remove(false);
     this.setScore();
-    var overHTML = this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
+    this.add.dom(400, 208).setInteractive().createFromCache('gameFinished');
     document.querySelector("#gameFinishedScore").innerHTML = `Acertou ${this.questionsCorrects} de ${this.questionsJson.length} questões<br> Pontuação: <strong>${this.userScore}</strong> [P]`;
     document.querySelector("#playAgain").addEventListener('click', () => {
-      this.gameEnd = false;
-      this.gameEnd = false;
-      this.userScore = false;
-      this.scene.restart();
+      this.playAgain();
     });
     this.personBike60x79.destroy();
     this.personBike60x79 = this.physics.add.image(760, 380, 'personBike60x79');
@@ -331,6 +328,14 @@ var Game = new Phaser.Class({
     });
     emitter.startFollow(this.personBike60x79);
   },
+  playAgain: function () {
+    if (this.gameEnd) {
+      this.gameEnd = false;
+      this.gameFinished = false;
+      this.userScore = false;
+      this.scene.restart();
+    }
+  }, 
   onEvent: function () {
     if (this.initialCountdownTime === 0) {
       this.timedEvent.remove(false);
@@ -428,13 +433,13 @@ var Game = new Phaser.Class({
       this.infoBox = false;
     }
   },
-  pressF: function () {
+  showCredits: function () {
     if (this.gameFinished) {
       if (!this.ee1) {
         this.sound.pauseAll();
-        this.ee1 = this.add.dom(400, 214).setInteractive().createFromCache('gameEe1');
+        this.ee1 = this.add.dom(400, 204).setInteractive().createFromCache('gameEe1');
         document.querySelector("#closeEe1").addEventListener('click', () => {
-          this.pressF();
+          this.showCredits();
         });
       } else {
         this.ee1.destroy();
@@ -486,8 +491,11 @@ var Game = new Phaser.Class({
       if (code === 73) {
         this.showInfo();
       }
-      if (code === 70) {
-        this.pressF();
+      if (code === 67) {
+        this.showCredits();
+      }
+      if (code === 74) {
+        this.playAgain();
       }
     }, this);
   }

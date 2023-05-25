@@ -329,6 +329,9 @@ var Game = new Phaser.Class({
     document.querySelector("#playAgain").addEventListener('click', () => {
       this.playAgain();
     });
+    document.querySelector("#credits").addEventListener('click', () => {
+      this.showCredits();
+    });
     this.personBike60x79.destroy();
     this.personBike60x79 = this.physics.add.image(760, 380, 'personBike60x79');
     this.personBike60x79.setVelocity(200, 200);

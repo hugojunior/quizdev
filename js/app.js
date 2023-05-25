@@ -204,6 +204,22 @@ var Game = new Phaser.Class({
     this.questionHTML = this.add.dom(400, 208).setInteractive().createFromCache(`question${questionID}`);
     document.querySelector("#questionPosition").innerHTML = `Questão ${this.getQuestionIndexByID(this.questionsJson, questionID) + 1} de ${this.questionsJson.length}`;
     document.querySelector("#questionCorrect").innerHTML = `Acertos: ${this.questionsCorrects}`;
+    document.getElementById('qr').addEventListener('click', (event) => {
+      if (document.querySelector('#boxQuestion')) {
+        if (event.target.dataset && event.target.dataset.r === '1') {
+          this.checkQuestion(this.currentQuestion, 'answer_a', 1);
+        }
+        if (event.target.dataset && event.target.dataset.r === '2') {
+          this.checkQuestion(this.currentQuestion, 'answer_b', 2);
+        }
+        if (event.target.dataset && event.target.dataset.r === '3') {
+          this.checkQuestion(this.currentQuestion, 'answer_c', 3);
+        }
+        if (event.target.dataset && event.target.dataset.r === '4') {
+          this.checkQuestion(this.currentQuestion, 'answer_d', 4);
+        }
+      }
+    });
   },
   checkQuestion: function (questionID, answerID, keyNumber) {
     if (this.checkAnswerKeyExists(questionID, answerID, keyNumber) && !this.gameEnd) {

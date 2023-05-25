@@ -226,6 +226,10 @@ canvas {
 }
 
 .boxQuestionContainer ol li {
+  cursor: pointer;
+}
+
+.boxQuestionContainer ol li {
   counter-increment: counter;
   margin-bottom: 5px;
 }

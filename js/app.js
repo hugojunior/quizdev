@@ -159,11 +159,21 @@ var Game = new Phaser.Class({
       fontSize: 15,
       color: "#EDEEEA"
     });
-    this.add.text(629, 412, '[F1] Ajuda - [P] Placar', {
+    this.add.text(628, 412, '[F1] Ajuda - ', {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 12,
       color: "#EDEEEA"
-    });
+    }).setInteractive().on('pointerdown', function () {
+      this.showHelp();
+    }, this);
+    this.add.text(722, 412, '[P] Placar', {
+      fontFamily: "'Courier New', Courier, monospace",
+      fontSize: 12,
+      color: "#EDEEEA"
+    }).setInteractive().on('pointerdown', function () {
+      this.showScore();
+    }, this);
+
     this.countdownText = this.add.text(695, 20, this.formatTime(this.initialCountdownTime), {
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: 25,

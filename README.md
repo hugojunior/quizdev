@@ -19,6 +19,4 @@ Basta clonar o repositório em um WebServer, ou usar o plugin [Live Server](http
 - iStock (Imagens) - https://www.istockphoto.com/
 - ColourLovers (Paleta de cores) - https://www.colourlovers.com/
 - PixaBay (Efeitos Sonoros) - https://pixabay.com/pt/sound-effects/
-- ChatGPT (Textos e traduções) - https://chat.openai.com/
-- StackOverflow (Dúvidas gerais) - https://stackoverflow.com/
-- GitHub (Repositório) - https://github.com/hugojunior/quizdev
+- ChatGPT (Textos e Questões) - https://chat.openai.com/

@@ -5,7 +5,7 @@ var User = new Phaser.Class({
       key: 'user'
     });
   },
-  preload: function () {
+  preload() {
     this.load.html('userForm', 'html/scenes/user/form.html');
     this.load.audio('music', ['sounds/game-music.mp3']);
     this.load.image('logo200x132', 'images/logo-200x132-white.png');
@@ -13,7 +13,7 @@ var User = new Phaser.Class({
     this.load.image('personBike60x79', 'images/person-bike-60x79.png');
     this.load.image('backgroundUser', 'images/bg-scene-user.jpg');
   },
-  create: function () {
+  create() {
     this.sound.removeAll();
     var music = this.sound.add('music', {
       loop: true,
@@ -49,15 +49,15 @@ var Info = new Phaser.Class({
       key: 'info'
     });
   },
-  init: function (data) {
+  init(data) {
     this.name = data.name;
   },
-  preload: function () {
+  preload() {
     this.load.image('backgroundInfo', 'images/bg-scene-info.jpg');
     this.load.image('logo100x66', 'images/logo-100x66-white.png');
     this.load.html('infoBriefing', 'html/scenes/info/briefing.html');
   },
-  create: function () {
+  create() {
     this.add.image(400, 214, 'backgroundInfo');
     this.add.image(400, 50, 'logo100x66');
     this.add.text(27, 40, 'Bem-vindo(a),', {
@@ -86,27 +86,28 @@ var Game = new Phaser.Class({
       key: 'game'
     });
   },
-  init: function (data) {
+  init(data) {
     this.name = data.name;
     this.initialCountdownTime = 180; //segundos
+    this.totalQuestions = 20; // total de questões (max: 50)
     this.lifes = 3;
     this.questionsCorrects = 0;
-    this.questionsIds = [];
-    this.questionsJson = {};
-    this.currentQuestion = null;
+    this.questionsJson = [];
+    this.currentQuestionIndex = null;
     this.gameEnd = false;
     this.helpBox = false;
     this.infoBox = false;
     this.finished = false;
   },
-  preload: function () {
+  preload() {
     this.input.keyboard.enabled = true;
-    this.load.json('questionsJson', 'js/questions.json');
+    this.load.json('questionsJson', 'js/questions-gpt.json');
     this.load.audio("sGameOver", ["sounds/game-over.mp3"]);
     this.load.audio("sGameSuccess", ["sounds/game-success.mp3"]);
     this.load.audio("sQuestionCorrect", ["sounds/question-correct.mp3"]);
     this.load.audio("sQuestionIncorrect", ["sounds/question-incorrect.mp3"]);
     this.load.audio("sQuestionTime", ["sounds/question-time.mp3"]);
+    this.load.html('question', 'html/scenes/game/question.html');
     this.load.html('gameOver', 'html/scenes/game/game-over.html');
     this.load.html('gameFinished', 'html/scenes/game/finished.html');
     this.load.html('gameHelp', 'html/scenes/game/help.html');
@@ -118,7 +119,6 @@ var Game = new Phaser.Class({
     this.load.image('boxName', 'images/box-name.png');
     this.load.image('boxTime', 'images/box-time.png');
     this.load.image('logoGame156x66', 'images/logo-game-156x66.png');
-    this.loadQuestionsHTML();
     this.loadLifeImages();
     if (this.isDay()) {
       this.load.image('backgroundGame', 'images/bg-scene-game-day.jpg');
@@ -126,7 +126,7 @@ var Game = new Phaser.Class({
       this.load.image('backgroundGame', 'images/bg-scene-game-night.jpg');
     }
   },
-  create: function () {
+  create() {
     this.add.image(400, 214, 'backgroundGame');
     this.add.image(135, 35, 'boxName');
     this.add.image(710, 35, 'boxTime');
@@ -201,40 +201,34 @@ var Game = new Phaser.Class({
       this.scene.restart();
       this.scene.start('user');
     }, this);
-    this.questionsJson = this.cache.json.get('questionsJson').sort(() => Math.random() - 0.5);
-    this.questionsJson.forEach(question => {
-      this.questionsIds.push(question.id);
-    });
-    this.currentQuestion = this.questionsIds[0];
+    this.questionsJson = this.cache.json.get('questionsJson').sort(() => Math.random() - 0.5).slice(0, this.totalQuestions);
+    this.currentQuestionIndex = 0;
     this.showQuestion();
     this.eventKeys();
   },
-  showQuestion: function (questionID) {
-    var questionID = questionID || this.currentQuestion;
-    this.questionHTML = this.add.dom(400, 208).setInteractive().createFromCache(`question${questionID}`);
-    document.querySelector("#questionPosition").innerHTML = `Questão ${this.getQuestionIndexByID(this.questionsJson, questionID) + 1} de ${this.questionsJson.length}`;
+  showQuestion(questionIndex) {
+    var questionIndex = questionIndex || this.currentQuestionIndex;
+    var question = this.getQuestionByIndex(this.questionsJson, questionIndex);
+    this.questionHTML = this.add.dom(400, 208).setInteractive().createFromCache('question');
+    document.querySelector("#questionPosition").innerHTML = `Questão ${this.currentQuestionIndex + 1} de ${this.questionsJson.length}`;
     document.querySelector("#questionCorrect").innerHTML = `Acertos: ${this.questionsCorrects}`;
+    document.querySelector("#questionTitle").innerHTML = question.pergunta;
+    document.querySelector("#questionTag").innerHTML = question.tema;
+    question.opcoes.forEach((option, index) => {
+      document.querySelector("#qr").innerHTML += `<li data-r="${index + 1}">${this.htmlEncode(option)}</li>`;
+    });
     document.getElementById('qr').addEventListener('click', (event) => {
       if (document.querySelector('#boxQuestion')) {
-        if (event.target.dataset && event.target.dataset.r === '1') {
-          this.checkQuestion(this.currentQuestion, 'answer_a', 1);
-        }
-        if (event.target.dataset && event.target.dataset.r === '2') {
-          this.checkQuestion(this.currentQuestion, 'answer_b', 2);
-        }
-        if (event.target.dataset && event.target.dataset.r === '3') {
-          this.checkQuestion(this.currentQuestion, 'answer_c', 3);
-        }
-        if (event.target.dataset && event.target.dataset.r === '4') {
-          this.checkQuestion(this.currentQuestion, 'answer_d', 4);
+        if (event.target.dataset.r) {
+          this.checkQuestion(this.currentQuestionIndex, event.target.dataset.r);
         }
       }
     });
   },
-  checkQuestion: function (questionID, answerID, keyNumber) {
-    if (this.checkAnswerKeyExists(questionID, answerID, keyNumber) && !this.gameEnd) {
+  checkQuestion(questionIndex, answerNumber) {
+    if (!this.gameEnd) {
       this.questionHTML.destroy();
-      if (!this.checkCorrectQuestion(questionID, answerID)) {
+      if (!this.checkCorrectQuestion(questionIndex, answerNumber)) {
         this.sQuestionIncorrect.play();
         if (this.lifes === 0) {
           return this.gameOver('[Acabaram suas vidas]');
@@ -242,38 +236,19 @@ var Game = new Phaser.Class({
           this.updateLifes();
         }
       }
-      if (this.questionsJson.length === this.getQuestionIndexByID(this.questionsJson, questionID) + 1) {
+      if (this.questionsJson.length === (this.currentQuestionIndex + 1)) {
         this.gameFinish();
       } else {
-        var nextQuestion = this.getNextQuestionID(this.questionsJson, questionID);
-        this.currentQuestion = nextQuestion;
-        this.showQuestion(nextQuestion);
+        this.currentQuestionIndex += 1;
+        this.showQuestion(this.currentQuestionIndex);
       }
     }
   },
-  checkAnswerKeyExists: function (questionID, answerID, keyNumber) {
-    var totalAnswers = this.getQuestionByID(this.questionsJson, questionID).answers;
-    totalAnswers = Object.values(totalAnswers).filter(Boolean).length;
-    return keyNumber <= totalAnswers;
-  },
-  checkCorrectQuestion: function (questionID, answerID) {
-    var question = this.getQuestionByID(this.questionsJson, questionID);
+  checkCorrectQuestion(questionIndex, answerNumber) {
+    var question = this.getQuestionByIndex(this.questionsJson, questionIndex);
     var correct = false;
-    switch (answerID) {
-      case 'answer_a':
-        correct = question.correct_answers.answer_a_correct === "true";
-        break;
-      case 'answer_b':
-        correct = question.correct_answers.answer_b_correct === "true";
-        break;
-      case 'answer_c':
-        correct = question.correct_answers.answer_c_correct === "true";
-        break;
-      case 'answer_d':
-        correct = question.correct_answers.answer_d_correct === "true";
-        break;
-    }
-    if (correct) {
+    if (question['opcoes'][answerNumber - 1] === question['correta']) {
+      correct = true;
       this.sQuestionCorrect.play();
       this.questionsCorrects += 1;
       this.initialCountdownTime += 10;
@@ -294,27 +269,21 @@ var Game = new Phaser.Class({
     this.tweenProg(correct);
     return correct;
   },
-  updateLifes: function () {
+  updateLifes() {
     this.lifes -= 1;
     this.boxLifes.destroy();
     this.boxLifes = this.add.image(744, 52, `boxLifes${this.lifes}`);
   },
-  loadQuestionsHTML: function () {
-    var questionsIds = [792, 983, 419, 651, 593, 606, 901, 243, 850, 845, 1066, 829, 842, 1058, 471, 689, 453, 629, 801, 295];
-    questionsIds.forEach(id => {
-      this.load.html(`question${id}`, `html/scenes/game/questions/${id}.html`).start();
-    });
-  },
-  loadLifeImages: function () {
+  loadLifeImages() {
     for (var i = 0; i <= 3; i++) {
       this.load.image(`boxLifes${i}`, `images/box-stars-${i}.png`);
     }
   },
-  isDay: function () {
+  isDay() {
     const hours = new Date().getHours();
     return hours >= 6 && hours < 18;
   },
-  gameOver: function (text) {
+  gameOver(text) {
     this.input.keyboard.enabled = false;
     this.gameEnd = true;
     this.sQuestionTime.stop();
@@ -327,7 +296,7 @@ var Game = new Phaser.Class({
       this.scene.restart();
     });
   },
-  gameFinish: function () {
+  gameFinish() {
     this.gameEnd = true;
     this.gameFinished = true;
     this.sQuestionTime.stop();
@@ -357,15 +326,15 @@ var Game = new Phaser.Class({
     });
     emitter.startFollow(this.personBike60x79);
   },
-  playAgain: function () {
+  playAgain() {
     if (this.gameEnd) {
       this.gameEnd = false;
       this.gameFinished = false;
       this.userScore = false;
       this.scene.restart();
     }
-  }, 
-  onEvent: function () {
+  },
+  onEvent() {
     if (this.initialCountdownTime === 0) {
       this.timedEvent.remove(false);
       this.questionHTML.destroy();
@@ -381,7 +350,7 @@ var Game = new Phaser.Class({
       this.countdownText.setText(this.formatTime(this.initialCountdownTime));
     }
   },
-  tweenProg: function (correct) {
+  tweenProg(correct) {
     this.input.keyboard.enabled = false;
     if (correct) {
       var emitter = this.particlesGreen.createEmitter({
@@ -407,7 +376,7 @@ var Game = new Phaser.Class({
       }
     });
   },
-  showHelp: function () {
+  showHelp() {
     if (!this.helpBox) {
       this.helpBox = this.add.dom(400, 208).setInteractive().createFromCache('gameHelp');
       document.querySelector("#closeHelp").addEventListener('click', () => {
@@ -418,7 +387,7 @@ var Game = new Phaser.Class({
       this.helpBox = false;
     }
   },
-  showScore: function () {
+  showScore() {
     if (!this.scoreBox) {
       var scoreLocal = JSON.parse(localStorage.getItem("score") || "[]").sort((a, b) => {
         return b.score - a.score;
@@ -442,7 +411,7 @@ var Game = new Phaser.Class({
       this.scoreBox = false;
     }
   },
-  setScore: function () {
+  setScore() {
     var scoreLocal = JSON.parse(localStorage.getItem("score") || "[]");
     this.userScore = Math.round(((this.questionsCorrects * 100) + (this.initialCountdownTime * 5)) * 1000000 / 3800);
     scoreLocal.push({
@@ -451,7 +420,7 @@ var Game = new Phaser.Class({
     });
     localStorage.setItem("score", JSON.stringify(scoreLocal));
   },
-  showInfo: function () {
+  showInfo() {
     if (!this.infoBox) {
       this.infoBox = this.add.dom(400, 208).setInteractive().createFromCache('gameInfo');
       document.querySelector("#closeInfo").addEventListener('click', () => {
@@ -462,7 +431,7 @@ var Game = new Phaser.Class({
       this.infoBox = false;
     }
   },
-  showCredits: function () {
+  showCredits() {
     if (this.gameFinished) {
       if (!this.ee1) {
         this.sound.pauseAll();
@@ -483,32 +452,33 @@ var Game = new Phaser.Class({
     partInSeconds = partInSeconds.toString().padStart(2, '0');
     return `${minutes}:${partInSeconds}`;
   },
-  getQuestionByID: function (myArray, value) {
-    return myArray.find(item => item.id === value);
+  htmlEncode(str) {
+    return str.replace(/[&<>"']/g, function ($0) {
+      return "&" + { "&": "amp", "<": "lt", ">": "gt", '"': "quot", "'": "#39" }[$0] + ";";
+    });
   },
-  getQuestionIndexByID: function (myArray, value) {
-    return myArray.findIndex(item => item.id === value);
+  getQuestionByIndex(questions, index) {
+    return questions[index];
   },
-  getNextQuestionID: function (myArray, value) {
-    var currentIndex = this.getQuestionIndexByID(myArray, value);
-    return this.questionsJson[currentIndex + 1].id;
-  },
-  eventKeys: function () {
+  eventKeys() {
     this.input.keyboard.on('keydown', function (event) {
       event.preventDefault();
       var code = event.keyCode;
       if (document.querySelector('#boxQuestion')) {
         if (code === 49 || code === 97) {
-          this.checkQuestion(this.currentQuestion, 'answer_a', 1);
+          this.checkQuestion(this.currentQuestionIndex, 1);
         }
         if (code === 50 || code === 98) {
-          this.checkQuestion(this.currentQuestion, 'answer_b', 2);
+          this.checkQuestion(this.currentQuestionIndex, 2);
         }
         if (code === 51 || code === 99) {
-          this.checkQuestion(this.currentQuestion, 'answer_c', 3);
+          this.checkQuestion(this.currentQuestionIndex, 3);
         }
         if (code === 52 || code === 100) {
-          this.checkQuestion(this.currentQuestion, 'answer_d', 4);
+          this.checkQuestion(this.currentQuestionIndex, 4);
+        }
+        if (code === 53 || code === 101) {
+          this.checkQuestion(this.currentQuestionIndex, 5);
         }
       }
       if (code === 112) {

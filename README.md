@@ -5,7 +5,7 @@
 ![QuizDEV](images/game-screenshot.png "QuizDEV")
 
 ## Descrição
-Este quiz é projetado para testar seus conhecimentos em tópicos importantes do mundo de desenvolvimento de software e tecnologia. Você será apresentado a uma série de tópicos importantes, como: **JavaScript**, **Docker**, **Linux**, **PHP**, **SQL** e etc...
+Este quiz gamificado é projetado para testar seus conhecimentos em tópicos importantes do mundo de desenvolvimento de software e tecnologia. Você será apresentado a uma série de tópicos importantes, como: **JavaScript**, **CSS**, **HTML**, **SQL** e etc...
 
 Versão Online: https://quizdev.hugojunior.com/
 

@@ -11,7 +11,7 @@ var User = new Phaser.Class({
     this.load.image('logo200x132', 'images/logo-200x132-white.png');
     this.load.image('personLaptop77x100', 'images/person-laptop-77x100.png');
     this.load.image('personBike60x79', 'images/person-bike-60x79.png');
-    this.load.image('backgroundUser', 'images/bg-scene-user.jpg');
+    this.load.image('backgroundUser', 'images/bg-scene-user.png');
   },
   create() {
     this.sound.removeAll();
@@ -53,7 +53,7 @@ var Info = new Phaser.Class({
     this.name = data.name;
   },
   preload() {
-    this.load.image('backgroundInfo', 'images/bg-scene-info.jpg');
+    this.load.image('backgroundInfo', 'images/bg-scene-info.png');
     this.load.image('logo100x66', 'images/logo-100x66-white.png');
     this.load.html('infoBriefing', 'html/scenes/info/briefing.html');
   },
@@ -101,7 +101,7 @@ var Game = new Phaser.Class({
   },
   preload() {
     this.input.keyboard.enabled = true;
-    this.load.json('questionsJson', 'js/questions-gpt.json');
+    this.load.json('questionsJson', 'js/questions.json');
     this.load.audio("sGameOver", ["sounds/game-over.mp3"]);
     this.load.audio("sGameSuccess", ["sounds/game-success.mp3"]);
     this.load.audio("sQuestionCorrect", ["sounds/question-correct.mp3"]);
@@ -121,9 +121,9 @@ var Game = new Phaser.Class({
     this.load.image('logoGame156x66', 'images/logo-game-156x66.png');
     this.loadLifeImages();
     if (this.isDay()) {
-      this.load.image('backgroundGame', 'images/bg-scene-game-day.jpg');
+      this.load.image('backgroundGame', 'images/bg-scene-game-day.png');
     } else {
-      this.load.image('backgroundGame', 'images/bg-scene-game-night.jpg');
+      this.load.image('backgroundGame', 'images/bg-scene-game-night.png');
     }
   },
   create() {
